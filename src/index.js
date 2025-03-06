@@ -11,16 +11,18 @@ app.use(express.json({ limit: '50mb' }));
 // Set timeout for data generation requests
 app.use("/api/arango/generate-data", (req, res, next) => {
   // Set timeout to 10 minutes
-  req.setTimeout(600000);
+  req.setTimeout(60000000);
   next();
 });
 
 // Initialize ArangoDB connection
 let db;
-connectToArangoDB().then((database) => {
-  db = database;
-  console.log('ArangoDB connection initialized');
-}).catch(err => console.error('Failed to initialize ArangoDB:', err));
+connectToArangoDB()
+  .then((database) => {
+    db = database;
+    console.log("ArangoDB connection initialized");
+  })
+  .catch((err) => console.error("Failed to initialize ArangoDB:", err));
 
 // Data Generation Endpoint
 app.post("/api/arango/generate-data", async (req, res) => {
@@ -52,9 +54,9 @@ app.get(
       const query = `
       FOR company IN companies
         FILTER CONTAINS(LOWER(company.industry), LOWER(@industry))
-        FOR branch IN OUTBOUND company company_branches
-          FOR department IN OUTBOUND branch branch_departments
-            FOR employee IN OUTBOUND department department_employees
+        FOR branch IN OUTBOUND company companies_branches
+          FOR department IN OUTBOUND branch branches_departments
+            FOR employee IN OUTBOUND department departments_employees
               LIMIT 100
               RETURN {
                 _id: employee._id,
@@ -96,8 +98,8 @@ app.get(
       const query = `
       FOR branch IN branches
         FILTER LIKE(branch.location, CONCAT('%', @location, '%'), true)
-        FOR department IN OUTBOUND branch branch_departments
-          FOR employee IN OUTBOUND department department_employees
+        FOR department IN OUTBOUND branch branches_departments
+          FOR employee IN OUTBOUND department departments_employees
             FILTER employee.salary > 100000
             LIMIT 100
             RETURN {
@@ -139,8 +141,8 @@ app.get(
       const query = `
       FOR company IN companies
         FILTER LIKE(company.industry, CONCAT('%', @industry, '%'), true)
-        FOR branch IN OUTBOUND company company_branches
-          FOR department IN OUTBOUND branch branch_departments
+        FOR branch IN OUTBOUND company companies_branches
+          FOR department IN OUTBOUND branch branches_departments
             FILTER department.headCount > 50
             LIMIT 100
             RETURN {

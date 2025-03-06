@@ -27,7 +27,11 @@ class ArangoDataGenerator {
           stats.branches++;
 
           // Create company->branch edge
-          await this.createEdge('company_branches', company._key, branch._key);
+          await this.createEdge(
+            "companies_branches",
+            company._key,
+            branch._key
+          );
           stats.edges++;
 
           // Generate departments for each branch
@@ -36,7 +40,11 @@ class ArangoDataGenerator {
             stats.departments++;
 
             // Create branch->department edge
-            await this.createEdge('branch_departments', branch._key, department._key);
+            await this.createEdge(
+              "branches_departments",
+              branch._key,
+              department._key
+            );
             stats.edges++;
 
             // Generate employees for each department
@@ -45,7 +53,11 @@ class ArangoDataGenerator {
               stats.employees++;
 
               // Create department->employee edge
-              await this.createEdge('department_employees', department._key, employee._key);
+              await this.createEdge(
+                "departments_employees",
+                department._key,
+                employee._key
+              );
               stats.edges++;
             }
           }
@@ -105,8 +117,8 @@ class ArangoDataGenerator {
 
   async createEdge(collectionName, fromKey, toKey) {
     const edge = {
-      _from: `${collectionName.split('_')[0]}s/${fromKey}`,
-      _to: `${collectionName.split('_')[1]}/${toKey}`
+      _from: `${collectionName.split("_")[0]}/${fromKey}`,
+      _to: `${collectionName.split("_")[1]}/${toKey}`,
     };
     return this.db.collection(collectionName).save(edge);
   }

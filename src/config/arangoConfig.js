@@ -32,9 +32,9 @@ const connectToArangoDB = async () => {
       { name: "branches", type: "document" },
       { name: "departments", type: "document" },
       { name: "employees", type: "document" },
-      { name: "company_branches", type: "edge" },
-      { name: "branch_departments", type: "edge" },
-      { name: "department_employees", type: "edge" },
+      { name: "companies_branches", type: "edge" },
+      { name: "branches_departments", type: "edge" },
+      { name: "departments_employees", type: "edge" },
     ];
 
     for (const collection of collections) {
